@@ -12,7 +12,6 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const { user, isAuthenticated, isLoading } = useAuth()
   const location = useLocation()
 
-  // Still checking auth status — don't render yet
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -21,14 +20,14 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     )
   }
 
-  // Not logged in — redirect to login
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  // Logged in but wrong role — send to a forbidden page (or their home page)
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />
+    // Redirect to role-appropriate home
+    const homeRoute = user.role === "MEMBER" ? "/reports/current" : "/dashboard"
+    return <Navigate to={homeRoute} replace />
   }
 
   return <>{children}</>
