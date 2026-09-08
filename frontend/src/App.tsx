@@ -1,16 +1,21 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Toaster } from "@/components/ui/sonner"
+import { AuthProvider } from "@/context/AuthContext"
+import { LoginPage } from "@/pages/auth/LoginPage"
+import { RegisterPage } from "@/pages/auth/RegisterPage"
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="flex flex-col items-center gap-4">
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Weekly Report Generator
-        </h1>
-        <Button>Get Started</Button>
-        <Button variant="outline">Outline Button</Button>
-      </div>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+        <Toaster position="top-right" richColors />
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
