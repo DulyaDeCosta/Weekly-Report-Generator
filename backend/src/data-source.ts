@@ -4,6 +4,8 @@ import { config } from 'dotenv';
 
 config();
 
+const isSeeding = process.argv.some((arg) => arg.includes('seed'));
+
 export const AppDataSource = new DataSource({
   type: 'mariadb',
   host: process.env.DB_HOST,
@@ -14,5 +16,5 @@ export const AppDataSource = new DataSource({
   entities: [__dirname + '/entities/*.entity{.ts,.js}'],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   synchronize: false,
-  logging: true,
+  logging: isSeeding ? ['error', 'warn'] : true,
 });
