@@ -4,6 +4,18 @@ Full-stack web application for team members to submit structured weekly reports,
 
 Built for the Sisenco Digital Full-Stack Developer assessment.
 
+---
+
+## Project Walkthrough & Video Demonstration
+
+Watch the full walkthrough covering system architecture, database design, authentication and RBAC, the report review workflow, and a live demo of the application across Member, Manager, and Admin roles:
+
+[![Watch Project Walkthrough](https://img.youtube.com/vi/-M8UNINu68I/maxresdefault.jpg)](https://youtu.be/-M8UNINu68I)
+
+**Direct Link:** [Watch the Full Project Demonstration on YouTube](https://youtu.be/-M8UNINu68I)
+
+---
+
 ## Tech Stack
 
 - **Backend:** NestJS 10, TypeORM, MariaDB, Passport JWT, bcrypt
