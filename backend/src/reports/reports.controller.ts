@@ -26,10 +26,7 @@ export class ReportsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(
-    @CurrentUser() user: User,
-    @Body() dto: CreateReportDto,
-  ) {
+  async create(@CurrentUser() user: User, @Body() dto: CreateReportDto) {
     return this.reportsService.createDraft(user, dto);
   }
 
@@ -39,10 +36,7 @@ export class ReportsController {
   }
 
   @Get('me')
-  async listMine(
-    @CurrentUser() user: User,
-    @Query() dto: ListReportsDto,
-  ) {
+  async listMine(@CurrentUser() user: User, @Query() dto: ListReportsDto) {
     return this.reportsService.listOwnReports(user, dto);
   }
 
@@ -58,6 +52,11 @@ export class ReportsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.reportsService.findOne(user, id);
+  }
+
+  @Get('me/backfillable-weeks')
+  async backfillableWeeks(@CurrentUser() user: User) {
+    return this.reportsService.getBackfillableWeeks(user);
   }
 
   @Patch(':id')

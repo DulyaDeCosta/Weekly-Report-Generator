@@ -14,7 +14,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-slate-500">Loading...</div>
       </div>
     )
@@ -25,8 +25,14 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    // Redirect to role-appropriate home
-    const homeRoute = user.role === "MEMBER" ? "/reports/current" : "/dashboard"
+    let homeRoute: string
+    if (user.role === "ADMIN") {
+      homeRoute = "/dashboard"
+    } else if (user.role === "MANAGER") {
+      homeRoute = "/dashboard"
+    } else {
+      homeRoute = "/reports/current"
+    }
     return <Navigate to={homeRoute} replace />
   }
 

@@ -45,6 +45,43 @@ export class ReportsService {
     private readonly dataSource: DataSource,
   ) {}
 
+  // async createDraft(user: User, dto: CreateReportDto): Promise<Report> {
+  //   const project = await this.projectRepository.findOne({
+  //     where: { id: dto.projectId, isActive: true },
+  //   });
+  //   if (!project) {
+  //     throw new NotFoundException('Project not found or inactive');
+  //   }
+
+  //   const weekStart = getMondayOfCurrentWeek();
+  //   const weekEnd = getSundayOfCurrentWeek();
+
+  //   const existing = await this.reportRepository.findOne({
+  //     where: {
+  //       authorId: user.id,
+  //       weekStartDate: weekStart as any,
+  //     },
+  //   });
+  //   if (existing) {
+  //     throw new ConflictException(
+  //       'You already have a report for this week. Edit that one instead.',
+  //     );
+  //   }
+
+  //   const report = this.reportRepository.create({
+  //     authorId: user.id,
+  //     projectId: dto.projectId,
+  //     weekStartDate: weekStart,
+  //     weekEndDate: weekEnd,
+  //     status: ReportStatus.DRAFT,
+  //     hoursDevelopment: 0,
+  //     hoursTesting: 0,
+  //     hoursMeetings: 0,
+  //     hoursDocumentation: 0,
+  //   });
+
+  //   return this.reportRepository.save(report);
+  // }
   async createDraft(user: User, dto: CreateReportDto): Promise<Report> {
     const project = await this.projectRepository.findOne({
       where: { id: dto.projectId, isActive: true },
@@ -53,8 +90,35 @@ export class ReportsService {
       throw new NotFoundException('Project not found or inactive');
     }
 
-    const weekStart = getMondayOfCurrentWeek();
-    const weekEnd = getSundayOfCurrentWeek();
+    let weekStart: Date;
+    let weekEnd: Date;
+
+    if (dto.weekStart) {
+      // User specified a week - validate it's past or current, must be a Monday
+      const requestedMonday = new Date(dto.weekStart + 'T00:00:00');
+      if (isNaN(requestedMonday.getTime())) {
+        throw new BadRequestException('Invalid weekStart date');
+      }
+      if (requestedMonday.getDay() !== 1) {
+        throw new BadRequestException(
+          'weekStart must be a Monday (YYYY-MM-DD)',
+        );
+      }
+      const currentMonday = getMondayOfCurrentWeek();
+      if (requestedMonday.getTime() > currentMonday.getTime()) {
+        throw new BadRequestException(
+          'Cannot create a report for a future week',
+        );
+      }
+      weekStart = requestedMonday;
+      const sunday = new Date(requestedMonday);
+      sunday.setDate(requestedMonday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      weekEnd = sunday;
+    } else {
+      weekStart = getMondayOfCurrentWeek();
+      weekEnd = getSundayOfCurrentWeek();
+    }
 
     const existing = await this.reportRepository.findOne({
       where: {
@@ -81,6 +145,20 @@ export class ReportsService {
     });
 
     return this.reportRepository.save(report);
+  }
+
+  async getBackfillableWeeks(_user: User): Promise<string[]> {
+    // Return last 12 weeks (excluding current)
+    const currentMonday = getMondayOfCurrentWeek();
+    const eligibleWeeks: string[] = [];
+
+    for (let i = 1; i <= 12; i++) {
+      const monday = new Date(currentMonday);
+      monday.setDate(currentMonday.getDate() - i * 7);
+      eligibleWeeks.push(formatDateOnly(monday));
+    }
+
+    return eligibleWeeks;
   }
 
   async updateContent(
