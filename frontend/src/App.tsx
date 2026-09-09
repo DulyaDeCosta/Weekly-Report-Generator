@@ -9,18 +9,9 @@ import { ReportDetailPage } from "@/pages/reports/ReportDetailPage"
 import { AllReportsPage } from "@/pages/reports/AllReportsPage"
 import { ProjectsPage } from "@/pages/projects/ProjectsPage"
 import { UsersPage } from "@/pages/users/UsersPage"
+import { DashboardPage } from "@/pages/dashboard/DashboardPage"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { AppLayout } from "@/layouts/AppLayout"
-
-// Placeholder pages — will be replaced with real ones
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold text-slate-900">{title}</h1>
-      <p className="text-slate-500">This page is coming soon.</p>
-    </div>
-  )
-}
 
 function App() {
   return (
@@ -44,7 +35,7 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
-                  <PlaceholderPage title="Dashboard" />
+                  <DashboardPage />
                 </ProtectedRoute>
               }
             />
