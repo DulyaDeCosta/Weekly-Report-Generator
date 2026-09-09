@@ -11,15 +11,19 @@ import {
   Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateMeDto } from '../auth/dto/update-me.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User, UserRole } from '../entities/user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
   @Get()
   @Roles(UserRole.MANAGER, UserRole.ADMIN)
