@@ -5,6 +5,8 @@ import { LoginPage } from "@/pages/auth/LoginPage"
 import { RegisterPage } from "@/pages/auth/RegisterPage"
 import { ReportHistoryPage } from "@/pages/reports/ReportHistoryPage"
 import { CurrentReportPage } from "@/pages/reports/CurrentReportPage"
+import { ReportDetailPage } from "@/pages/reports/ReportDetailPage"
+import { AllReportsPage } from "@/pages/reports/AllReportsPage"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { AppLayout } from "@/layouts/AppLayout"
 
@@ -70,7 +72,7 @@ function App() {
               path="/reports"
               element={
                 <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
-                  <PlaceholderPage title="All Reports" />
+                    <AllReportsPage />
                 </ProtectedRoute>
               }
             />
@@ -78,7 +80,7 @@ function App() {
             {/* Single Report Detail - any role, service enforces access */}
             <Route
               path="/reports/:id"
-              element={<PlaceholderPage title="Report Detail" />}
+              element={<ReportDetailPage />}  
             />
 
             {/* Projects - Manager/Admin */}
