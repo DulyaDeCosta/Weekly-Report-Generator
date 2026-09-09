@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-import { User } from '../entities/user.entity';
+import { User, UserRole } from '../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -25,21 +25,20 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async register(dto: RegisterDto): Promise<{ user: SafeUser; accessToken: string }> {
-    const hashedPassword = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
-
+  async register(dto: RegisterDto) {
     const user = await this.usersService.create({
       name: dto.name,
       email: dto.email,
-      hashedPassword,
+      password: dto.password,
+      role: UserRole.MEMBER,
     });
 
-    const accessToken = this.signToken(user);
-
-    return {
-      user: this.toSafeUser(user),
-      accessToken,
-    };
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
+    return { user, accessToken: token };
   }
 
   async login(dto: LoginDto): Promise<{ user: SafeUser; accessToken: string }> {
@@ -68,14 +67,19 @@ export class AuthService {
   }
 
   async changePassword(user: User, dto: ChangePasswordDto): Promise<void> {
-    const passwordMatches = await bcrypt.compare(dto.currentPassword, user.password);
+    const passwordMatches = await bcrypt.compare(
+      dto.currentPassword,
+      user.password,
+    );
 
     if (!passwordMatches) {
       throw new BadRequestException('Current password is incorrect');
     }
 
     if (dto.currentPassword === dto.newPassword) {
-      throw new BadRequestException('New password must be different from current password');
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(dto.newPassword, BCRYPT_ROUNDS);
