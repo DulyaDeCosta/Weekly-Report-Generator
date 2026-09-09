@@ -1,4 +1,4 @@
-import { FileText, Clock, CheckCircle2, Users } from "lucide-react"
+import { FileText, Clock, CheckCircle2, Users, AlertTriangle, ShieldAlert } from "lucide-react"
 import type { DashboardStats } from "@/lib/api/dashboard"
 
 interface MetricCardsProps {
@@ -28,6 +28,20 @@ const CARDS = [
     bg: "bg-green-50",
   },
   {
+    key: "needsCorrection" as const,
+    label: "Needs Correction",
+    icon: ShieldAlert,
+    color: "text-orange-600",
+    bg: "bg-orange-50",
+  },
+  {
+    key: "openBlockers" as const,
+    label: "Open Blockers",
+    icon: AlertTriangle,
+    color: "text-red-600",
+    bg: "bg-red-50",
+  },
+  {
     key: "activeMembers" as const,
     label: "Active Members",
     icon: Users,
@@ -38,25 +52,25 @@ const CARDS = [
 
 export function MetricCards({ metrics }: MetricCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       {CARDS.map((card) => {
         const Icon = card.icon
         return (
           <div
             key={card.key}
-            className="bg-white rounded-lg border border-slate-200 p-5"
+            className="bg-white rounded-lg border border-slate-200 p-4"
           >
             <div className="flex items-start justify-between">
-              <div>
-                <div className="text-sm text-slate-500 font-medium">
+              <div className="min-w-0 flex-1">
+                <div className="text-xs text-slate-500 font-medium truncate">
                   {card.label}
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mt-1">
+                <div className="text-2xl font-bold text-slate-900 mt-1">
                   {metrics[card.key]}
                 </div>
               </div>
-              <div className={`p-2 rounded-lg ${card.bg}`}>
-                <Icon className={`h-5 w-5 ${card.color}`} />
+              <div className={`p-2 rounded-lg ${card.bg} flex-shrink-0 ml-2`}>
+                <Icon className={`h-4 w-4 ${card.color}`} />
               </div>
             </div>
           </div>

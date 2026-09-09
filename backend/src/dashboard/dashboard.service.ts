@@ -16,6 +16,8 @@ export interface DashboardStats {
     awaitingReview: number;
     approvedThisWeek: number;
     activeMembers: number;
+    needsCorrection: number;
+    openBlockers: number;
   };
   statusDistribution: Array<{ status: string; count: number }>;
   reportsByMember: Array<{ memberName: string; count: number }>;
@@ -92,6 +94,33 @@ export class DashboardService {
       where: { isActive: true },
     });
 
+    // Metric 5: needs correction (compliance issue count)
+    const needsCorrection = await buildQuery()
+      .andWhere('report.status = :needsCorrection', {
+        needsCorrection: ReportStatus.NEEDS_CORRECTION,
+      })
+      .getCount();
+
+    // Metric 6: open blockers across the team (from non-draft reports in period)
+    const blockersRaw = await this.reportRepository
+      .createQueryBuilder('report')
+      .leftJoin('report.blockers', 'blocker')
+      .select('COUNT(blocker.id)', 'count')
+      .where('report.weekStartDate >= :weekStart', { weekStart: weekStartStr })
+      .andWhere('report.weekStartDate <= :weekEnd', { weekEnd: weekEndStr })
+      .andWhere('report.status != :draftStatus', {
+        draftStatus: ReportStatus.DRAFT,
+      });
+
+    if (query.projectId) {
+      blockersRaw.andWhere('report.projectId = :projectId', {
+        projectId: query.projectId,
+      });
+    }
+
+    const blockersResult = await blockersRaw.getRawOne();
+    const openBlockers = parseInt(blockersResult?.count ?? '0', 10);
+
     // Chart 1: status distribution
     const statusRaw = await buildQuery()
       .select('report.status', 'status')
@@ -136,6 +165,8 @@ export class DashboardService {
         awaitingReview,
         approvedThisWeek,
         activeMembers,
+        needsCorrection,
+        openBlockers,
       },
       statusDistribution,
       reportsByMember,
