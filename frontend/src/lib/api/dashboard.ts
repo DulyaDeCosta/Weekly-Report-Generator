@@ -6,6 +6,8 @@ export interface DashboardStats {
     awaitingReview: number
     approvedThisWeek: number
     activeMembers: number
+    needsCorrection: number
+    openBlockers: number
   }
   statusDistribution: Array<{ status: string; count: number }>
   reportsByMember: Array<{ memberName: string; count: number }>
