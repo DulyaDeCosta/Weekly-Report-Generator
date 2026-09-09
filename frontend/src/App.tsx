@@ -7,6 +7,7 @@ import { ReportHistoryPage } from "@/pages/reports/ReportHistoryPage"
 import { CurrentReportPage } from "@/pages/reports/CurrentReportPage"
 import { ReportDetailPage } from "@/pages/reports/ReportDetailPage"
 import { AllReportsPage } from "@/pages/reports/AllReportsPage"
+import { ProjectsPage } from "@/pages/projects/ProjectsPage"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { AppLayout } from "@/layouts/AppLayout"
 
@@ -88,7 +89,7 @@ function App() {
               path="/projects"
               element={
                 <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
-                  <PlaceholderPage title="Projects" />
+                    <ProjectsPage />
                 </ProtectedRoute>
               }
             />
