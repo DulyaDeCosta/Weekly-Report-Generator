@@ -8,6 +8,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<User>
   register: (name: string, email: string, password: string) => Promise<User>
   logout: () => void
+  setUser: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -61,14 +62,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = "/login"
   }
 
-  const value: AuthContextValue = {
-    user,
-    isLoading,
-    isAuthenticated: user !== null,
-    login,
-    register,
-    logout,
-  }
+const value: AuthContextValue = {
+  user,
+  isLoading,
+  isAuthenticated: user !== null,
+  login,
+  register,
+  logout,
+  setUser: (u) => {
+    setUser(u)
+    localStorage.setItem("user", JSON.stringify(u))
+  },
+}
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

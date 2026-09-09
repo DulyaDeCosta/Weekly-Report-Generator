@@ -10,6 +10,8 @@ import { AllReportsPage } from "@/pages/reports/AllReportsPage"
 import { ProjectsPage } from "@/pages/projects/ProjectsPage"
 import { UsersPage } from "@/pages/users/UsersPage"
 import { DashboardPage } from "@/pages/dashboard/DashboardPage"
+import { MemberProfilePage } from "@/pages/members/MemberProfilePage"
+import { MyProfilePage } from "@/pages/profile/MyProfilePage"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { AppLayout } from "@/layouts/AppLayout"
 
@@ -65,7 +67,7 @@ function App() {
               path="/reports"
               element={
                 <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
-                    <AllReportsPage />
+                  <AllReportsPage />
                 </ProtectedRoute>
               }
             />
@@ -73,7 +75,7 @@ function App() {
             {/* Single Report Detail - any role, service enforces access */}
             <Route
               path="/reports/:id"
-              element={<ReportDetailPage />}  
+              element={<ReportDetailPage />}
             />
 
             {/* Projects - Manager/Admin */}
@@ -81,7 +83,7 @@ function App() {
               path="/projects"
               element={
                 <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
-                    <ProjectsPage />
+                  <ProjectsPage />
                 </ProtectedRoute>
               }
             />
@@ -91,11 +93,25 @@ function App() {
               path="/users"
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
-                    <UsersPage />
+                  <UsersPage />
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/members/:id"
+              element={
+                <ProtectedRoute allowedRoles={["MANAGER", "ADMIN"]}>
+                  <MemberProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/profile" 
+              element={
+                <MyProfilePage />
+                } 
+            />
           </Route>
+
 
           {/* Root redirects based on auth state */}
           <Route path="/" element={<Navigate to="/reports/current" replace />} />

@@ -14,6 +14,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,10 @@ export class AuthController {
     const { password, ...safeUser } = user;
     return safeUser;
   }
+  @Patch('me')
+    async updateMe(@CurrentUser() user: User, @Body() dto: UpdateMeDto) {
+      return this.authService.updateMe(user, dto);
+    }
 
   @Patch('password')
   @HttpCode(HttpStatus.NO_CONTENT)

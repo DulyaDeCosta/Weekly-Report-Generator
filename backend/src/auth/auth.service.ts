@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { User, UserRole } from '../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
@@ -65,6 +67,32 @@ export class AuthService {
       accessToken,
     };
   }
+  async updateMe(user: User, dto: UpdateMeDto): Promise<Omit<User, 'password'>> {
+  const updates: Partial<User> = {};
+
+  if (dto.name && dto.name.trim() !== user.name) {
+    updates.name = dto.name.trim();
+  }
+
+  if (dto.email && dto.email.toLowerCase() !== user.email) {
+    const emailLower = dto.email.toLowerCase();
+    const existing = await this.usersService.findByEmail(emailLower);
+    if (existing && existing.id !== user.id) {
+      throw new ConflictException('An account with this email already exists');
+    }
+    updates.email = emailLower;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    const { password: _p, ...safe } = user;
+    return safe;
+  }
+
+  Object.assign(user, updates);
+  const saved = await this.usersService.saveUser(user);
+  const { password: _p, ...safe } = saved;
+  return safe;
+}
 
   async changePassword(user: User, dto: ChangePasswordDto): Promise<void> {
     const passwordMatches = await bcrypt.compare(

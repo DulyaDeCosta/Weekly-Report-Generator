@@ -20,7 +20,9 @@ export class UsersService {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email: email.toLowerCase() } });
+    return this.userRepository.findOne({
+      where: { email: email.toLowerCase() },
+    });
   }
 
   async findById(id: string): Promise<User | null> {
@@ -92,16 +94,12 @@ export class UsersService {
 
     // Prevent admin from demoting themselves
     if (isSelf && data.role && data.role !== user.role) {
-      throw new BadRequestException(
-        'You cannot change your own role',
-      );
+      throw new BadRequestException('You cannot change your own role');
     }
 
     // Prevent admin from deactivating themselves
     if (isSelf && data.isActive === false) {
-      throw new BadRequestException(
-        'You cannot deactivate your own account',
-      );
+      throw new BadRequestException('You cannot deactivate your own account');
     }
 
     // Email uniqueness check if being changed
@@ -110,7 +108,9 @@ export class UsersService {
         where: { email: data.email.toLowerCase() },
       });
       if (existing) {
-        throw new ConflictException('An account with this email already exists');
+        throw new ConflictException(
+          'An account with this email already exists',
+        );
       }
       data.email = data.email.toLowerCase();
     }
@@ -119,6 +119,9 @@ export class UsersService {
     const saved = await this.userRepository.save(user);
     const { password: _password, ...safeUser } = saved;
     return safeUser as User;
+  }
+  async saveUser(user: User): Promise<User> {
+    return this.userRepository.save(user);
   }
 
   async remove(id: string, actingUser: User): Promise<void> {
