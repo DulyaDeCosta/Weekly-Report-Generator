@@ -216,8 +216,17 @@ export function AllReportsPage() {
                     <TableCell className="font-medium">
                       {formatWeek(report.weekStartDate, report.weekEndDate)}
                     </TableCell>
-                    <TableCell className="text-slate-700">
-                      {report.author?.name ?? "-"}
+                    <TableCell>
+                    {report.author ? (
+                        <Link
+                        to={`/members/${report.author.id}`}
+                        className="text-slate-700 hover:text-blue-600 hover:underline font-medium"
+                        >
+                        {report.author.name}
+                        </Link>
+                    ) : (
+                        <span className="text-slate-700">-</span>
+                    )}
                     </TableCell>
                     <TableCell className="text-slate-600">
                       {report.project?.name ?? "-"}
