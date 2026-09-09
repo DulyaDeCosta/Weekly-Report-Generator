@@ -21,6 +21,11 @@ export const usersApi = {
     return response.data
   },
 
+  getById: async (id: string): Promise<User> => {
+    const response = await api.get<User>(`/users/${id}`)
+    return response.data
+  },
+
   create: async (data: CreateUserInput): Promise<User> => {
     const response = await api.post<User>("/users", data)
     return response.data
