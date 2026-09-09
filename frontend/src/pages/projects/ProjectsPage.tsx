@@ -11,8 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ProjectModal } from "../components/ProjectModal"
-import { DeleteProjectDialog } from "../components/DeleteProjectDialog"
+import { ProjectModal } from "../projects/components/ProjectModal"
+import { DeleteProjectDialog } from "../projects/components/DeleteProjectDialog"
 import { projectsApi } from "@/lib/api/projects"
 import type { Project } from "@/lib/api/reports"
 import type { AxiosError } from "axios"
