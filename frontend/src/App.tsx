@@ -11,6 +11,7 @@ import { ProjectsPage } from "@/pages/projects/ProjectsPage"
 import { UsersPage } from "@/pages/users/UsersPage"
 import { DashboardPage } from "@/pages/dashboard/DashboardPage"
 import { MemberProfilePage } from "@/pages/members/MemberProfilePage"
+import { MyProfilePage } from "@/pages/profile/MyProfilePage"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { AppLayout } from "@/layouts/AppLayout"
 
@@ -103,6 +104,11 @@ function App() {
                   <MemberProfilePage />
                 </ProtectedRoute>
               }
+            />
+            <Route path="/profile" 
+              element={
+                <MyProfilePage />
+                } 
             />
           </Route>
 
