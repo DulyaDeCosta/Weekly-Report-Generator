@@ -22,6 +22,7 @@ import type { AxiosError } from "axios"
 interface ReportFormProps {
   report: Report
   onReportUpdate: (report: Report) => void
+  forceReadOnly?: boolean
 }
 
 const STATUS_STYLES: Record<ReportStatus, string> = {
@@ -38,7 +39,7 @@ const STATUS_LABEL: Record<ReportStatus, string> = {
   APPROVED: "Approved",
 }
 
-export function ReportForm({ report, onReportUpdate }: ReportFormProps) {
+export function ReportForm({ report, onReportUpdate, forceReadOnly }: ReportFormProps) {
   const [tasks, setTasks] = useState<TaskInput[]>(
     (report.tasks ?? []).map((t) => ({
       name: t.name,
@@ -77,7 +78,10 @@ export function ReportForm({ report, onReportUpdate }: ReportFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isReadOnly =
-    report.status === "SUBMITTED" || report.status === "APPROVED"
+    forceReadOnly ||
+    report.status === "SUBMITTED" ||
+    report.status === "APPROVED"
+    
   const canSubmit =
     report.status === "DRAFT" || report.status === "NEEDS_CORRECTION"
 
